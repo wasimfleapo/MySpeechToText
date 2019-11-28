@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">MySpeechToTextDemo</string>
+
+
+
+    <string name="dismiss">Dismiss</string>
+    <string name="please_wait">Please wait...</string>
+    <string name="server_error">Error</string>
+    <string name="server_error_occurred">Error occurred !</string>
+    <string name="connecting_to_server">Connecting to server</string>
+    <string name="network_not_available">Network not available</string>
+    <string name="internet_not_available">Internet connection not available!</string>
+    <string name="could_not_connect_to_server">Could not connect to server, please try after some time.</string>
+</resources>
