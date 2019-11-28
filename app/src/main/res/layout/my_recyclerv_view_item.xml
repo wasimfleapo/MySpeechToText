@@ -10,6 +10,7 @@
         android:layout_height="wrap_content"
         android:text="Android"
         android:textStyle="bold"
+        android:paddingStart="@dimen/_15sdp"
         android:textSize="@dimen/_16ssp"
         android:layout_centerVertical="true"/>
 
@@ -18,7 +19,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="0"
-        android:paddingEnd="@dimen/_10sdp"
+        android:paddingEnd="@dimen/_15sdp"
         android:textSize="@dimen/_16ssp"
         android:layout_centerVertical="true"
         android:layout_alignParentEnd="true"/>

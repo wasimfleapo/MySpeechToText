@@ -69,11 +69,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         initialize();
 
-        if(isApiCalledFirstTime){
-
-            editor.putBoolean("isApiCalledFirstTime",false);
-
-        }
         modelNumberListApiCall();
 
         checkPermission();
