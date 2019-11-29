@@ -58,7 +58,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     SpeechRecognizer mSpeechRecognizer;
     Intent mSpeechRecognizerIntent;
 
-    boolean isApiCalledFirstTime = true;
 
     TextView txt_speak;
 
@@ -67,15 +66,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // For binding xml with java code using Id's
         initialize();
 
+        // Calling Dictionary Api
         modelNumberListApiCall();
 
+
+        // Checking run time permission for android version 6.0 or greater
         checkPermission();
 
 
 
-
+        // Setting adapter for recycler view
         adapter = new RecyclerAdapter(this,dictionaryDataList);
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
@@ -84,6 +87,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         recyclerView.setAdapter(adapter);
 
 
+        // Initializing Speech Recognizer
          mSpeechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
 
 
@@ -94,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Locale.getDefault());
 
 
+        // Setting Listener for Speech Recognizer
         mSpeechRecognizer.setRecognitionListener(new RecognitionListener() {
             @Override
             public void onReadyForSpeech(Bundle bundle) {
@@ -134,14 +139,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         .getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
 
                 //displaying the first match
-                if (matches != null)
-                   // editText.setText(matches.get(0));
-
+                if (matches != null){
 
                     Log.e("Return Data",""+matches.get(0));
-                changeItemBackgroundColor(matches.get(0));
 
-                Toast.makeText(MainActivity.this,""+matches.get(0),Toast.LENGTH_SHORT).show();
+                    String spokenWord = matches.get(0);
+
+                    if(spokenWord.equalsIgnoreCase("XX")){
+
+                        spokenWord = "Twenty";
+                    }else if(spokenWord.equalsIgnoreCase("second exit")){
+
+                        spokenWord = "2nd Exit";
+                    }
+
+                    changeItemBackgroundColor(spokenWord);
+
+                    Toast.makeText(MainActivity.this,""+matches.get(0),Toast.LENGTH_SHORT).show();
+                }
+
+
+
+
             }
 
             @Override
@@ -155,25 +174,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
-       /* ryt_button_speak.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                switch (motionEvent.getAction()) {
-                    case MotionEvent.ACTION_UP:
-                        mSpeechRecognizer.stopListening();
-
-                        break;
-
-                    case MotionEvent.ACTION_DOWN:
-                        mSpeechRecognizer.startListening(mSpeechRecognizerIntent);
-
-                        break;
-                }
-                return false;
-            }
-        });*/
 
 
+        // Setting listener for button click
         ryt_button_speak.setOnClickListener(this);
 
 
@@ -224,11 +227,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    // Building data set to pass to recycler view adapter
     private void buildDictionaryData(List<Dictionary> dictionary) {
 
 
         dictionaryDataList.clear();
-      //  dictionaryDataList.addAll(dictionary);
 
 
         for(int i = 0;i<dictionary.size();i++){
@@ -237,6 +240,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             dictionaryDataList.add(model);
         }
 
+        wordFrequencySort(dictionaryDataList);
 
         if(adapter!= null){
 
@@ -244,6 +248,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+
+    // Highlighting the particular cell of recycler view when the word spoken is present inside the Dictionary.
     private void changeItemBackgroundColor(String returnedText){
 
         boolean isDataMatch = false;
@@ -261,6 +267,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 wordFrequencySort(dictionaryDataList);
                 adapter.notifyDataSetChanged();
 
+                recyclerView.getLayoutManager().scrollToPosition(i);
+
             }else{
 
                 Log.e("Match","Data does not matches");
@@ -274,27 +282,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Toast.makeText(this,"Word is not present inside Dictionary",Toast.LENGTH_SHORT).show();
 
         }
-
-
-
-
-
-
-
-
-
-     //   adapter.notifyDataSetChanged();
-
-        // iterate
-
-        for(int i = 0;i<dictionaryDataList.size();i++){
-
-            Log.e("IsBackgroundColoured",""+dictionaryDataList.get(i).isBackgroundColoured());
-
-
-        }
-
-
 
     }
 
@@ -325,6 +312,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+
+    // Sorting the elements in the recycler view according to the frequency of the word spoken.
     static void wordFrequencySort(List<DictionaryModel> dictionaryDataList) {
         int n = dictionaryDataList.size();
         DictionaryModel temp ;
