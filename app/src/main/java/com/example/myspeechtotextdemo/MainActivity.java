@@ -6,14 +6,17 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.CalendarContract;
 import android.provider.Settings;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
@@ -21,6 +24,9 @@ import android.speech.SpeechRecognizer;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -64,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        darkenStatusBar();
         setContentView(R.layout.activity_main);
 
         // For binding xml with java code using Id's
@@ -155,7 +162,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                     changeItemBackgroundColor(spokenWord);
 
-                    Toast.makeText(MainActivity.this,""+matches.get(0),Toast.LENGTH_SHORT).show();
                 }
 
 
@@ -279,7 +285,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if(!isDataMatch){
 
             isDataMatch = false;
-            Toast.makeText(this,"Word is not present inside Dictionary",Toast.LENGTH_SHORT).show();
+
+            showDialog(this,"The Word " + "\' "+returnedText+" \'" +" is not present inside Dictionary");
+
+        }else{
+
+            showDialog(this,"You spoke " + "\' "+returnedText+" \'"                                              );
 
         }
 
@@ -334,4 +345,46 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     }
+
+    public void showDialog(Activity activity, String msg){
+        final Dialog dialog = new Dialog(activity);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(false);
+        dialog.setContentView(R.layout.dialog);
+
+        TextView text = (TextView) dialog.findViewById(R.id.text_dialog);
+        text.setText(msg);
+
+        Button dialogButton = (Button) dialog.findViewById(R.id.btn_dialog);
+        dialogButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+
+    }
+
+    public  void darkenStatusBar() {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(Color.parseColor("#00574B"));
+
+
+        }
+        Window window = getWindow();
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.setStatusBarColor(Color.parseColor("#00574B"));
+
+    }
+
+
+
+
+
 }
+
